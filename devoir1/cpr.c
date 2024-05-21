@@ -1,8 +1,8 @@
 /*------------------------------------------------------------
 Fichier: cpr.c
 
-Nom:
-Numero d'etudiant:
+Nom: Chloe Al-Frenn
+Numero d'etudiant:  300211508
 
 Description: Ce programme contient le code pour la creation
              d'un processus enfant et y attacher un tuyau.
@@ -19,6 +19,9 @@ Explication du processus zombie
 #include <sys/select.h>
 #include <unistd.h>	
 
+#define BUFFER_SIZE 50
+#define READ_END 0
+#define WRITE_END 1
 
 /* Prototype */
 void creerEnfantEtLire(int );
@@ -66,10 +69,15 @@ Description:
 
 void creerEnfantEtLire(int prcNum)
 {
-	int pipes[2], pid, ret;
-	char buffer[20]; // Buffer qui va contenir prcNum en tant que char[]
+	char write_msg[BUFFER_SIZE];
+	char read_msg[BUFFER_SIZE];
+	int fd[2];
+	pid_t pid;
+	char buffer[BUFFER_SIZE]; // Buffer qui va contenir prcNum en tant que char[]
 	snprintf(buffer, sizeof(prcNum), "%d", prcNum-1);
     char* args[] = {"cpr.c", buffer, NULL};
+	
+
 
 	if(prcNum == 1){ //ne cree pas d'enfant
 		printf("Processus %d commence\n", prcNum);
@@ -77,27 +85,31 @@ void creerEnfantEtLire(int prcNum)
 		printf("Processus %d termine\n", prcNum);
 	} else { //cree des enfants
 		printf("Processus %d commence\n", prcNum);
-		ret = pipe(pipes); //cree un tuyaux avec deux descripteur 0 lecture 1 ecriture
-		if(ret == -1)
+		if(pipe(fd) == -1) //cree un tuyaux avec deux descripteur 0 lecture 1 ecriture
 		{
-			perror("pipe");
+			fprintf(stderr ,"Pipe failed");
 			exit(1);
 		}
 		pid = fork();
 		if(pid == -1) //erreure
 		{
-			printf("fork failed");
+			fprintf(stderr, "Fork failed");
 			exit(1);
 		}
 		else if(pid == 0) //child
 		{
-			dup2(pipes[1], STDOUT_FILENO); //attacher le bout écrivant du tuyau à la sortie standard de l’enfant
-			//should i close the pipe after??
+			dup2(fd[WRITE_END], STDOUT_FILENO); //attacher le bout écrivant du tuyau à la sortie standard de l’enfant
+			close(fd[READ_END]);
+			close(fd[WRITE_END]); //Close both ends of the pipe
         	execvp(args[0], args); //cree un enfant en executant cpr num-1
+			//should exit be added?
 		} else { //parent
-			
-			wait();
+			read(fd[READ_END], read_msg, BUFFER_SIZE); //lire du bout de lecture du tuyau
+			write(fd[WRITE_END], write_msg, strlen(write_msg)+1);
+			//do i close both ends of the pipe here or after the wait?
+			wait(); //is the wait necessary
 			printf("Processus %d termine\n", prcNum);
+			//should exit be added?
 		}
 	}
     
@@ -107,8 +119,8 @@ void creerEnfantEtLire(int prcNum)
 		//la commande « cpr num-1 ». ecriture side (sortie standar is 1 ) (fait)
 
 		//Tous les processus qui créent des enfants (i.e. processus 2 à n) 
-		//lisent du bout de lecture du tuyau et (read?)
-		//écrivent toutes données lues à leur sortie standard. (write?)
+		//lisent du bout de lecture du tuyau et (read?) (fait)
+		//écrivent toutes données lues à leur sortie standard. (write?) or print? or sprintf() 
 		//n’attachez pas les bouts de lecture des tuyaux aux entrées standards 
 	
 	
