@@ -72,26 +72,24 @@ Description:
 
 void creerEnfantEtLire(int prcNum)
 {
-	
-	char read_msg[BUFFER_SIZE];
+
+	char msgRead[BUFFER_SIZE]; //messages lu par le bout de lecture du tuyau
 	int fd[2];
 	pid_t pid;
 	char buffer[BUFFER_SIZE]; // Buffer qui va contenir prcNum en tant que char[]
 	snprintf(buffer, sizeof(buffer), "%d", prcNum - 1);
-	char* args[] = {"./cpr", buffer, NULL};
+	char *args[] = {"./cpr", buffer, NULL};
 
-	if (prcNum == 1)
-	{ // ne cree pas d'enfant
+	if (prcNum == 1) // ne cree pas d'enfant
+	{
 		printf("Processus %d commence\n", prcNum);
 		fflush(stdout);
 		sleep(5);
 		printf("Processus %d termine\n", prcNum);
 		fflush(stdout);
-		
 	}
-	else
-	{ // cree des enfants
-
+	else // cree des enfants
+	{
 		if (pipe(fd) == -1) // cree un tuyaux avec deux descripteur 0 lecture 1 ecriture
 		{
 			fprintf(stderr, "Pipe failed");
@@ -103,40 +101,29 @@ void creerEnfantEtLire(int prcNum)
 			fprintf(stderr, "Fork failed");
 			exit(1);
 		}
-		else if (pid == 0) // child
+		else if (pid == 0) // enfant
 		{
 			close(fd[READ_END]);
 			dup2(fd[WRITE_END], STDOUT_FILENO); // attacher le bout écrivant du tuyau à la sortie standard de l’enfant
-			close(fd[WRITE_END]);  // Close both ends of the pipe
+			close(fd[WRITE_END]);
 			execvp("./cpr", args); // cree un enfant en executant cpr num-1
 			fprintf(stderr, "Execvp failed");
 			exit(1);
 		}
-		else //parent
-		{		
+		else // parent
+		{
 			printf("Processus %d commence\n", prcNum);
-            fflush(stdout);
-			close(fd[WRITE_END]);	
-			ssize_t charRead;			 
-			while ((charRead = read(fd[READ_END], read_msg, BUFFER_SIZE)) > 0 ){
-				write(STDOUT_FILENO, read_msg, charRead); //ecrit au terminal la sortie du bout de lecture
-			} // lire du bout de lecture du tuyau et les copier dans read_msg
+			fflush(stdout);
+			close(fd[WRITE_END]);
+			ssize_t nbytesRead;
+			while ((nbytesRead = read(fd[READ_END], msgRead, BUFFER_SIZE)) > 0)
+			{
+				write(STDOUT_FILENO, msgRead, nbytesRead); // ecrit au terminal la sortie du bout de lecture
+			}
 			printf("Processus %d termine\n", prcNum);
 			fflush(stdout);
 			close(fd[READ_END]);
 			exit(0);
 		}
 	}
-
-	// Quand un processus crée un enfant, il doit d’abords créer un tuyau et (fait)
-	// attacher le bout écrivant du tuyau à la sortie standard de l’enfant avant d’exécuter (fait)
-	// la commande « cpr num-1 ». ecriture side (sortie standar is 1 ) (fait)
-
-	// Tous les processus qui créent des enfants (i.e. processus 2 à n)
-	// lisent du bout de lecture du tuyau et (read?) (fait)
-	// écrivent toutes données lues à leur sortie standard. (write?) or print? or sprintf()
-	// n’attachez pas les bouts de lecture des tuyaux aux entrées standards
-
-	/* S.V.P. completez cette fonction selon les
-	   instructions du devoirs. */
 }
