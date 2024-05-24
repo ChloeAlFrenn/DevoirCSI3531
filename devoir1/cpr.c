@@ -106,7 +106,7 @@ void creerEnfantEtLire(int prcNum)
 			close(fd[READ_END]);
 			dup2(fd[WRITE_END], STDOUT_FILENO); // attacher le bout écrivant du tuyau à la sortie standard de l’enfant
 			close(fd[WRITE_END]);
-			execvp("./cpr", args); // cree un enfant en executant cpr num-1
+			execvp(args[0], args); // cree un enfant en executant cpr num-1
 			fprintf(stderr, "Execvp failed");
 			exit(1);
 		}
