@@ -1,8 +1,8 @@
 /*------------------------------------------------------------
 Fichier: cpr.c
 
-Nom: Chloe Al-Frenn
-Numero d'etudiant:  300211508
+Nom: Chloe Al-Frenn, Chada Bendriss
+Numero d'etudiant:  300211508, 300266679
 
 Description: Ce programme contient le code pour la creation
 			 d'un processus enfant et y attacher un tuyau.
@@ -90,7 +90,7 @@ void creerEnfantEtLire(int prcNum)
 	}
 	else // cree des enfants
 	{
-		if (pipe(fd) == -1) // cree un tuyaux avec deux descripteur 0 lecture 1 ecriture
+		if (pipe(fd) < 0) // cree un tuyaux avec deux descripteur 0 lecture 1 ecriture
 		{
 			fprintf(stderr, "Pipe failed");
 			exit(1);
@@ -115,10 +115,10 @@ void creerEnfantEtLire(int prcNum)
 			printf("Processus %d commence\n", prcNum);
 			fflush(stdout);
 			close(fd[WRITE_END]);
-			ssize_t nbytesRead;
-			while ((nbytesRead = read(fd[READ_END], msgRead, BUFFER_SIZE)) > 0)
+			ssize_t nbytes;
+			while ((nbytes = read(fd[READ_END], msgRead, BUFFER_SIZE)) > 0)
 			{
-				write(STDOUT_FILENO, msgRead, nbytesRead); // ecrit au terminal la sortie du bout de lecture
+				write(STDOUT_FILENO, msgRead, nbytes); // ecrit au terminal la sortie du bout de lecture
 			}
 			printf("Processus %d termine\n", prcNum);
 			fflush(stdout);
