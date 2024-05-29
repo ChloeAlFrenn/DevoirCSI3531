@@ -10,7 +10,14 @@ Description: Ce programme contient le code pour la creation
 		 qui seront ensuite envoyes a la sortie standard.
 
 Explication du processus zombie
-(point 5 de "A completer" dans le devoir):
+(point 5 de "A completer" dans le devoir):un processus zombie apparaît
+lorsque le processus enfant (cpr n-1) se termine mais que son parent
+n'a pas encore terminé lors du sleep(10). Puisque le parent n’a pas de
+wait il n’attend pas et ne sait pas quand l’enfant termine alors les
+ressources de l’enfant ne sont pas relâchée et le pid de l’enfant devient
+associée a <defunct>.  Dans ce cas, cpr n-1 devient un zombie après avoir
+terminé, et reste dans cet état jusqu'à ce que cpr n se termine pour
+relâcher les ressources de l’enfant.
 
 	(s.v.p. completez cette partie);
 
@@ -73,7 +80,7 @@ Description:
 void creerEnfantEtLire(int prcNum)
 {
 
-	char msgRead[BUFFER_SIZE]; //messages lu par le bout de lecture du tuyau
+	char msgRead[BUFFER_SIZE]; // messages lu par le bout de lecture du tuyau
 	int fd[2];
 	pid_t pid;
 	char buffer[BUFFER_SIZE]; // Buffer qui va contenir prcNum en tant que char[]
@@ -123,6 +130,7 @@ void creerEnfantEtLire(int prcNum)
 			printf("Processus %d termine\n", prcNum);
 			fflush(stdout);
 			close(fd[READ_END]);
+			sleep(10);
 			exit(0);
 		}
 	}
