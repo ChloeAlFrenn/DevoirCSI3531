@@ -19,7 +19,12 @@ associée a <defunct>.  Dans ce cas, cpr n-1 devient un zombie après avoir
 terminé, et reste dans cet état jusqu'à ce que cpr n se termine pour
 relâcher les ressources de l’enfant.
 
-	(s.v.p. completez cette partie);
+!NOTE IMPORTANTE:!
+
+Svp changez la valeur de args[0] à la ligne 93
+pour que cette valeur soit similaire a l'appel
+de programme que vous devez faire pour appeler
+cpr sur votre systeme. 
 
 -------------------------------------------------------------*/
 #include <stdio.h>
@@ -85,7 +90,7 @@ void creerEnfantEtLire(int prcNum)
 	pid_t pid;
 	char buffer[BUFFER_SIZE]; // Buffer qui va contenir prcNum en tant que char[]
 	snprintf(buffer, sizeof(buffer), "%d", prcNum - 1);
-	char *args[] = {"./cpr", buffer, NULL};
+	char *args[] = {"./cpr", buffer, NULL}; //svp changez le premier argument pour que l'appel programme marche sur votre systeme
 
 	if (prcNum == 1) // ne cree pas d'enfant
 	{
