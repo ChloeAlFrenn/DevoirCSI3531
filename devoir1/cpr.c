@@ -10,10 +10,13 @@ Description: Ce programme contient le code pour la creation
 		 qui seront ensuite envoyes a la sortie standard.
 
 Explication du processus zombie
-(point 5 de "A completer" dans le devoir):un processus zombie apparaît
-lorsque le processus enfant (cpr n-1) se termine mais que son parent
-n'a pas encore terminé lors du sleep(10). Puisque le parent n’a pas de
-wait il n’attend pas et ne sait pas quand l’enfant termine alors les
+(point 5 de "A completer" dans le devoir):
+Un processus zombie apparaît lorsque le processus enfant (cpr n-1) 
+se termine (exit) mais que son parent n'a pas encore lu le status de l'enfant.
+Lorsque le parent se termine son enfant zombie va aussi se terminer et c'est 
+maintenant le parent qui va devenir zombie de son parent. 
+Ce qu'on peut observer lors du sleep(10). 
+Le parent attend le signal que l'enfant se termine alors les
 ressources de l’enfant ne sont pas relâchée et le pid de l’enfant devient
 associée a <defunct>.  Dans ce cas, cpr n-1 devient un zombie après avoir
 terminé, et reste dans cet état jusqu'à ce que cpr n se termine pour
@@ -21,7 +24,7 @@ relâcher les ressources de l’enfant.
 
 !NOTE IMPORTANTE:!
 
-Svp changez la valeur de args[0] à la ligne 93
+Svp changez la valeur de args[0] à la ligne 96
 pour que cette valeur soit similaire a l'appel
 de programme que vous devez faire pour appeler
 cpr sur votre systeme. 
