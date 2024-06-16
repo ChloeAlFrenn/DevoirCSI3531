@@ -1,6 +1,7 @@
 // To run the program, use the commands javac Fibonacci.java and java Fibonacci (your number)
 //package devoir2;
-
+//Nom: Chloe Al-Frenn, Chada Bendriss
+//Numero d'etudiant:  300211508, 300266679
 public class Fibonacci {
 
     public static void main(String[] args) {

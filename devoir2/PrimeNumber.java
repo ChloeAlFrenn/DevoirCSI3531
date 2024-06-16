@@ -1,4 +1,6 @@
 // To run the program, use the commands javac PrimeNumber.java and java PrimeNumber
+//Nom: Chloe Al-Frenn, Chada Bendriss
+//Numero d'etudiant:  300211508, 300266679
 import java.util.Scanner;
 
 //Étend la classe Thread
