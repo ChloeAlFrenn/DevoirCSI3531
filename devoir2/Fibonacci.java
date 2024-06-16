@@ -1,4 +1,5 @@
-package devoir2;
+// To run the program, use the commands javac Fibonacci.java and java Fibonacci (your number)
+//package devoir2;
 
 public class Fibonacci {
 

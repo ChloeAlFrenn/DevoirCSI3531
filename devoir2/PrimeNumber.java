@@ -1,4 +1,4 @@
-// To run the program, use the commands javac main.java and java main
+// To run the program, use the commands javac PrimeNumber.java and java PrimeNumber
 import java.util.Scanner;
 
 //Étend la classe Thread
@@ -26,7 +26,7 @@ class Worker extends Thread{
         }
     }
 }
-public class main {
+public class PrimeNumber {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         //Le programme demande a l utilisateur d entrer un nombre
