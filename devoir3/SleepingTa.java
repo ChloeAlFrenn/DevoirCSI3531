@@ -55,15 +55,18 @@ class Student extends Thread {
                 studentReady.release(); //student is ready
                 if (availableTa.tryAcquire()) {
                     System.out.println("Student " + id + " is getting help from the TA");
-                    Thread.sleep(1000); // Same help time as ta
+                    Thread.sleep(2000); // Same help time as ta
+                    System.out.println("Student finished " + id + " getting help from the TA");
                     availableTa.release();
+                 
                 } else if (availableChairs.tryAcquire()) {
                     System.out.println("Student " + id + " is waiting on a chair for help");
                     studentReady.release(); //student is ready
                     availableTa.acquire(); // wait for the TA to become available
                     availableChairs.release(); // Leave the chair
                     System.out.println("Student " + id + " is getting help from the TA");
-                    Thread.sleep(1000); // Same help time as ta
+                    Thread.sleep(2000); // Same help time as ta
+                    System.out.println("Student finished " + id + " getting help from the TA");
                     availableTa.release();
                 } else {
                     System.out.println("Student " + id + " found no chair so will program");
@@ -97,8 +100,7 @@ class TA extends Thread {
                 studentReady.acquire(); // Wait for a student to be ready when they do studentReady.release()
                 System.out.println("TA helping a student");
                 // Help the student
-                Thread.sleep(1000); // Same help time as student
-                System.out.println("TA finished helping a student");
+                Thread.sleep(2000); // Same help time as student
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
