@@ -11,67 +11,80 @@ import java.util.concurrent.Semaphore;
 public class SleepingTa {
 
     public static void main(String[] args) {
-        int waitingChairs = 3;
+        int numOfChairs = 3;
+        Semaphore availableChairs = new Semaphore(numOfChairs);
+        Semaphore availableTa = new Semaphore(1);
         Scanner scanner = new Scanner(System.in);
         System.out.println("entrez le nombre d'etudiant");
         int n = scanner.nextInt();
         // crée un TA
-        TA ta = new TA();
+        TA ta = new TA(availableChairs, availableTa);
         ta.start();
         // crée les fils etudiants
-        for ( int i = 0; i < n; i++) {
-            Student student = new Student();
+        for (int i = 0; i < n; i++) {
+            Student student = new Student(i, availableChairs, availableTa);
             student.start();
         }
+        scanner.close();
     }
 
 }
 
 class Student extends Thread {
 
-
     private int id;
-    private static Semaphore chairsMutex = new Semaphore(1);
-    private static Semaphore students = new Semaphore(0);
-    private static Semaphore ta = new Semaphore(0);
-    private static int waitingStudents = 0;
-    private static final int NUM_CHAIRS = 3;
+    private Semaphore availableChairs;
+    private Semaphore availableTa;
 
-    public Student(int id) {
+    public Student(int id, Semaphore availableChairs, Semaphore availableTA) {
         this.id = id;
+        this.availableChairs = availableChairs;
+        this.availableTa = availableTA;
     }
 
-
-    
-
     public void run() {
-        System.out.println("Student");
-      }
+        System.out.println("Student" + id + "is programming");
+        // check if the ta is avalaible
+        if(availableTa.tryAcquire()){
+            System.out.println("Student" + id + "is getting help from the TA");
+            availableTa.release();
+        } else if(availableChairs.tryAcquire()){
+            System.out.println("Student" + id + "is waiting on a chair help from the TA");
+            if(availableTa.tryAcquire()){
+                availableChairs.release();
+                System.out.println("Student" + id + "is getting help from the TA");
+                availableTa.release();
+            }
+        }
+
+        // else check if a chair is avalaible
+
+        // if not then program again
+    }
 }
 
 class TA extends Thread {
 
+    private Semaphore availableChairs;
+    private Semaphore availableTa;
 
-    private int port = 0;  // On commence au port 0
-    private int charge = 0;  // Aucune charge au debut
-    private int nombreTours;  // nombres de tours a executer
-    // Semaphores
-    public Semaphore semEmbPort0;  // Semaphore pour embarquer au port 0
-    public Semaphore semEmbPort1;  // Semaphore pour embarquer au port 1
-    public Semaphore semDebarque;  // Semaphore pour debarquer 
-    public Semaphore semDepart;    // Semaphore pour le depart du traversier
-
-    public TA(int prt, int nbtours) {
-        this.port = prt;
-        semEmbPort0 = new Semaphore(0, true);
-        semEmbPort1 = new Semaphore(0, true);
-        semDebarque = new Semaphore(0, true);
-        semDepart = new Semaphore(0, true);
-        nombreTours = nbtours;
+    public TA(Semaphore availableChairs, Semaphore availableTA) {
+        this.availableChairs = availableChairs;
+        this.availableTa = availableTA;
     }
 
-
     public void run() {
-        System.out.println("TA");
-      }
+        if(availableTa.availablePermits() == 1){
+            System.out.println("TA sleeping");
+        }
+        // student wakes ta
+        System.out.println("TA waken up to help");
+        // check if anyone is in chair
+        if (availableChairs.availablePermits() == 3) {
+            System.out.println("TA Back to sleep");
+        } else {
+            System.out.println("TA still helping");
+        }
+       
+    }
 }
