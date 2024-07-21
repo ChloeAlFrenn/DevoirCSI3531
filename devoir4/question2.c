@@ -22,10 +22,11 @@ de pages FIFO et LRU présentés dans le module 8.
 /* Prototype */
 void generer_chaine_reference(int *, int);
 int remplacement_fifo(int *, int, int);
+int remplacement_lru(int *, int, int);
 
 int main()
 {
-    srand(time(NULL)); // pour que les valeures generees par rand() ne soient pas tjr les memes
+    srand(time(NULL)); // pour que les valeures générées par rand() ne soient pas tjr les memes
     int longueur_chaine_reference = LONGUEUR_MIN_CHAINE_REFERENCE + rand() % (LONGUEUR_MAX_CHAINE_REFERENCE - LONGUEUR_MIN_CHAINE_REFERENCE + 1);
     int chaine_reference[longueur_chaine_reference];
     generer_chaine_reference(chaine_reference, longueur_chaine_reference);
@@ -38,8 +39,12 @@ int main()
     printf("\n");
 
     int nombre_cadres = MIN_CADRE + rand() % (MAX_CADRE - MIN_CADRE + 1);
+    
     int defauts_fifo = remplacement_fifo(chaine_reference, longueur_chaine_reference, nombre_cadres);
     printf("Nombre de défauts de page avec FIFO et %d cadres : %d\n", nombre_cadres, defauts_fifo);
+
+    int defauts_lru = remplacement_lru(chaine_reference, longueur_chaine_reference, nombre_cadres);
+    printf("Nombre de défauts de page avec LRU et %d cadres : %d\n", nombre_cadres, defauts_fifo);
 
     return 0;
 }
@@ -93,8 +98,60 @@ int remplacement_fifo(int *chaine_reference, int longueur, int nombre_cadres)
             defauts++;
         }
 
-         // Afficher l'état des cadres vous pouvez enlever cette section
-        printf("Cadres après accès à la page %d : ", chaine_reference[i]);
+         // Affiche les cadres, vous pouvez enlever cette section
+        printf("Cadres après accès à la page %d (FIFO) : ", chaine_reference[i]);
+        for (int k = 0; k < nombre_cadres; k++) {
+            if (cadres[k] != -1) {
+                printf("%d ", cadres[k]);
+            } else {
+                printf("_ ");
+            }
+        }
+        printf("\n");
+    }
+    return defauts;
+}
+
+/**
+ * Implemente l'algorithme de remplacement de pages LRU.
+ * @param chaine_reference - La chaîne de référence de pages.
+ * @param longueur - La longueur de la chaîne de référence.
+ * @param nombre_cadres - Le nombre de cadres de pages disponibles.
+ * @return defauts - Le nombre de défauts de page.
+ */
+int remplacement_lru(int *chaine_reference, int longueur, int nombre_cadres) {
+    int defauts = 0;
+    int cadres[nombre_cadres];
+    int temps_utilisation[nombre_cadres];
+
+    for (int i = 0; i < nombre_cadres; i++) {
+        cadres[i] = -1;
+        temps_utilisation[i] = -1;
+    }
+
+    for (int i = 0; i < longueur; i++) {
+        int trouver = 0;
+        for (int j = 0; j < nombre_cadres; j++) {
+            if (chaine_reference[i] == cadres[j]) {
+                trouver = 1;
+                temps_utilisation[j] = i;
+                break;
+            }
+        }
+        if (!trouver) {
+            int lru_index = 0;
+            for (int j = 1; j < nombre_cadres; j++) {
+                if (temps_utilisation[j] < temps_utilisation[lru_index]) { //Celui qui a le + petit temps sera remplacé
+                    lru_index = j;
+                }
+            }
+            cadres[lru_index] = chaine_reference[i];
+            temps_utilisation[lru_index] = i;
+            defauts++;
+        }
+
+        // Affiche les cadres, vous pouvez enlever cette section
+        printf("Cadres après accès à la page %d (LRU) : ", chaine_reference[i]);
         for (int k = 0; k < nombre_cadres; k++) {
             if (cadres[k] != -1) {
                 printf("%d ", cadres[k]);
