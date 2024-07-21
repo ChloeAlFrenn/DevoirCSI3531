@@ -11,6 +11,7 @@ de pages FIFO et LRU présentés dans le module 8.
 -------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX_NUM_PAGE 9
 #define LONGUEUR_MIN_CHAINE_REFERENCE 8
@@ -21,6 +22,7 @@ void generer_chaine_reference(int *, int);
 
 int main()
 {
+    srand(time(NULL)); // pour que les valeures generees par rand() ne soient pas tjr les memes
     int longueur_chaine_reference = LONGUEUR_MIN_CHAINE_REFERENCE + rand() % (LONGUEUR_MAX_CHAINE_REFERENCE - LONGUEUR_MIN_CHAINE_REFERENCE + 1);
     int chaine_reference[longueur_chaine_reference];
     generer_chaine_reference(chaine_reference, longueur_chaine_reference);
