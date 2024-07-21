@@ -22,7 +22,7 @@ public class Producer {
         if (n <= 1) {
             return 1;
         }
-        long[] catalan = new long[n + 1];
+        long[] catalan = new long[n + 1]; // Tableau pour stocker les valeurs des nombres de Catalan
         catalan[0] = 1;
         catalan[1] = 1;
 
@@ -45,6 +45,7 @@ public class Producer {
             System.exit(1);
         }
 
+        // Génération des nombres de Catalan
         List<Long> catalanNumbers = new ArrayList<>();
         for (int i = 1; i <= n; i++) {
             catalanNumbers.add(catalan(i));
@@ -54,9 +55,10 @@ public class Producer {
 
         try (ServerSocket serverSocket = new ServerSocket(12345)) {
             System.out.println("Producer waiting for connection...");
-            Socket socket = serverSocket.accept();
+            Socket socket = serverSocket.accept(); // Accepte une connexion entrante
             System.out.println("Connection established with consumer.");
 
+             // Envoie la liste des nombres de Catalan au consommateur
             try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
                 out.writeObject(catalanNumbers);
                 System.out.println("Catalan numbers sent to consumer.");

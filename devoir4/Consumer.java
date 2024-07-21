@@ -36,11 +36,11 @@ public class Consumer {
                 }
                 System.out.println();
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // Affiche les erreurs
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Affiche les erreurs
         }
     }
 }
