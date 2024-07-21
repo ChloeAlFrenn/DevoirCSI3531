@@ -17,7 +17,7 @@ import java.net.Socket;
 import java.util.List;
 
 public class Consumer {
-    @SuppressWarnings("unchecked")
+    
     public static void main(String[] args) {
 
         // Cree un Socket pour se connecter au producteur sur le port 12345 
@@ -26,7 +26,7 @@ public class Consumer {
 
             // Utilise un ObjectInputStream pour recevoir la liste des nombres de Catalan envoyée par le producteur.
             try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-                
+                @SuppressWarnings("unchecked")
                 List<Long> catalanNumbers = (List<Long>) in.readObject();
                 System.out.println("Received Catalan numbers:");
                 for (Long number : catalanNumbers) {
