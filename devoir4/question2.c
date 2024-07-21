@@ -14,11 +14,14 @@ de pages FIFO et LRU présentés dans le module 8.
 #include <time.h>
 
 #define MAX_NUM_PAGE 9
+#define MIN_CADRE 1
+#define MAX_CADRE 7
 #define LONGUEUR_MIN_CHAINE_REFERENCE 8
 #define LONGUEUR_MAX_CHAINE_REFERENCE 20
 
 /* Prototype */
 void generer_chaine_reference(int *, int);
+int remplacement_fifo(int *, int, int);
 
 int main()
 {
@@ -33,6 +36,10 @@ int main()
         printf("%d ", chaine_reference[i]);
     }
     printf("\n");
+
+    int nombre_cadres = MIN_CADRE + rand() % (MAX_CADRE - MIN_CADRE + 1);
+    int defauts_fifo = remplacement_fifo(chaine_reference, longueur_chaine_reference, nombre_cadres);
+    printf("Nombre de défauts de page avec FIFO et %d cadres : %d\n", nombre_cadres, defauts_fifo);
 
     return 0;
 }
@@ -85,6 +92,17 @@ int remplacement_fifo(int *chaine_reference, int longueur, int nombre_cadres)
             index = (index + 1) % nombre_cadres;
             defauts++;
         }
+
+         // Afficher l'état des cadres vous pouvez enlever cette section
+        printf("Cadres après accès à la page %d : ", chaine_reference[i]);
+        for (int k = 0; k < nombre_cadres; k++) {
+            if (cadres[k] != -1) {
+                printf("%d ", cadres[k]);
+            } else {
+                printf("_ ");
+            }
+        }
+        printf("\n");
     }
     return defauts;
 }
