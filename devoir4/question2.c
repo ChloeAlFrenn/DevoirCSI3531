@@ -49,3 +49,42 @@ void generer_chaine_reference(int *chaine_reference, int longueur)
         chaine_reference[i] = rand() % (MAX_NUM_PAGE + 1);
     }
 }
+
+/**
+ * Implemente l'algorithme de remplacement de pages FIFO.
+ * @param chaine_reference - La chaine de référence de pages.
+ * @param longueur - La longueur de la chaine de référence.
+ * @param nombre_cadres - Le nombre de cadres de pages disponibles.
+ * @return defauts - Le nombre de défauts de page.
+ */
+int remplacement_fifo(int *chaine_reference, int longueur, int nombre_cadres)
+{
+    int defauts = 0;
+    int index = 0;
+    int cadres[nombre_cadres];
+
+    for (int i = 0; i < nombre_cadres; i++)
+    {
+        cadres[i] = -1;
+    }
+
+    for (int i = 0; i < longueur; i++)
+    {
+        int trouver = 0;
+        for (int j = 0; j < nombre_cadres; j++)
+        {
+            if (chaine_reference[i] == cadres[j])
+            {
+                trouver = 1;
+                break;
+            }
+        }
+        if (!trouver)
+        {
+            cadres[index] = chaine_reference[i];
+            index = (index + 1) % nombre_cadres;
+            defauts++;
+        }
+    }
+    return defauts;
+}
